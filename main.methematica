@@ -1,0 +1,117 @@
+(* Taken from https://mathematica.stackexchange.com/questions/137156/where-is-abbott-how-to-make-logograms-from-the-film-arrival *)
+
+
+NoiseGen[n_, e_] :=
+   Block[{f, fe = Range[n/2]^e, d = {}},
+      f = E^(I 2.0 \[Pi] RandomReal[{0., 1.}, n/2])/fe;
+      f[[-1]] = Re[f[[-1]]];
+      d = Join[d, Chop[InverseFourier[
+             Join[{0}, f, Conjugate[Reverse[Drop[f, -1]]]]]]];
+      Rescale[d]]
+
+Logogram[{rmin_, rmax_}, {wmin_, wmax_}, cv_, nc_, {dmin_, dmax_},
+         nd_, b_, phi0_, seed_,
+         {rbmin_, rbmax_}, {pmin_, pmax_}, {bmin_, bmax_}, nb_, phi1_,
+         {nxmin_, nxmax_}, {tlenmin_, tlenmax_}, noiseExp_, scale_, 
+         ntendrils_] :=
+
+   Block[{radius = 1000., r, c, p, w, t, dp, g, nx, tlen, noise, c0},
+     SeedRandom[seed];
+     Binarize[Blur[Dilation[
+        Graphics[{CapForm["Round"],
+
+     (* circles composing circular stroke *)
+        Table[
+          r = RandomReal[radius*{rmin, rmax}];
+          c = RandomReal[{-r, r}*cv, 2];
+          p = RandomReal[{0, 6.283}, 2];
+          w = Thickness[RandomReal[{wmin, wmax}]];
+          {w, Circle[c, r, p + phi0]},
+        {i, 1, nc}],
+
+   (* additional disks composing circular stroke *)
+        Table[
+          r = RandomReal[radius*{rmin, rmax}];
+          t = RandomReal[{0, 6.283}] + phi0;
+          Disk[r*{Cos[t], Sin[t]}, RandomReal[radius*{dmin, dmax}, 2]],
+        {i, 1, nd}],
+
+   (* disks composing blob on circular stroke *)
+        Table[
+          r = RandomReal[radius*{rbmin, rbmax}];
+          dp = RandomReal[{pmin, pmax}];
+          Disk[r*{Cos[phi1 + dp], Sin[phi1 + dp]}, 
+               RandomReal[radius*{bmin, bmax}, 2]],
+        {i, 1, nb}],
+
+   (* tendrils on blob *)
+        g = Table[
+          nx = RandomReal[{nxmin, nxmax}];
+          tlen = 2*RandomInteger[{tlenmin, tlenmax}];
+          noise = nx*NoiseGen[tlen, noiseExp];
+          noise = noise - Mean[noise];
+          c0 = radius*{Cos[#], Sin[#]} &[phi1 + RandomReal[{pmin, pmax}]];
+       Transpose[
+         c0 + scale*
+           Transpose[(-1)^RandomInteger[{0, 1}] AnglePath[noise]]],
+      {i, 1, ntendrils}];
+   Thickness[0.008], Map[Line, g]
+
+   }, ImageSize -> 1000],
+   DiskMatrix[2]], 3], b]
+  ]
+
+Manipulate[
+   Logogram[{rmin, rmax}, {wmin, wmax}, cv, nc, {dmin, dmax},
+        nd, b, phi0, seed,
+        {rbmin, rbmax}, {pmin, pmax}, {bmin, bmax}, nb, phi1,
+        {nxmin, nxmax}, {tlenmin, tlenmax}, noiseExp, scale, ntendrils],
+
+     Style["Circular Brush Stroke", 12, Bold], Style["", 12, Bold],
+     {{rmin, 0.98, "Minimum Circle Radius"}, 0.9, 1.1, Appearance -> "Labeled"},
+     {{rmax, 1.02, "Maximum Circle Radius"}, 0.9, 1.1, Appearance -> "Labeled"},
+     Delimiter,
+     {{wmin, 0.0003, "Minimum Line Thickness"}, 0.0002, 0.008, Appearance -> "Labeled"},
+     {{wmax, 0.0010, "Maximum Line Thickness"}, 0.0002, 0.008, Appearance -> "Labeled"},
+     Delimiter,
+     {{cv, 0.05, "Circle Centre Variation"}, 0.01, 0.2, Appearance -> "Labeled"},
+     {{nc, 300, "Number of Circles"}, 20, 1000, 20, Appearance -> "Labeled"},
+     {{phi0, 5.0, "Angle of Circle Gap"}, 0.0, 6.3, Appearance -> "Labeled"},
+     Delimiter,
+     {{dmin, 0.010, "Minimum Disk Radius"}, 0.001, 0.2, Appearance -> "Labeled"},
+     {{dmax, 0.030, "Maximum Disk Radius"}, 0.001, 0.2, Appearance -> "Labeled"},
+     {{nd, 50, "Number of Disks"}, 10, 300, 10, Appearance -> "Labeled"},
+     Delimiter,
+
+     Style["", 12, Bold], Style["", 12, Bold], Style["Blob", 12, Bold], Style["", 12, Bold],
+     {{rbmin, 0.98, "Minimum Radial Distance"}, 0.9, 1.1, Appearance -> "Labeled"},
+     {{rbmax, 1.02, "Maximum Radial Distance"}, 0.9, 1.5, Appearance -> "Labeled"},
+     Delimiter,
+     {{bmin, 0.020, "Minimum Blob Radius"}, 0.001, 0.2, Appearance -> "Labeled"},
+     {{bmax, 0.070, "Maximum Blob Radius"}, 0.001, 0.2, Appearance -> "Labeled"},
+     {{nb, 30, "Number of Blob Disks"}, 5, 200, 5, Appearance -> "Labeled"},
+     Delimiter,
+     {{phi1, 2.0, "Initial Blob Angle"}, 0.0, 6.3, Appearance -> "Labeled"},
+     {{pmin, 0.0, "Minimum Angular Extent"}, 0.0, 0.5, Appearance -> "Labeled"},
+     {{pmax, 0.8, "Maximum Angular Extent"}, 0.1, 2.5, Appearance -> "Labeled"},
+     Delimiter,
+
+     Style["", 12, Bold], Style["", 12, Bold], Style["Tendrils", 12, Bold], Style["", 12, Bold],
+     {{nxmin, 0.1, "Minimum Curliness"}, 0.01, 1.0, Appearance -> "Labeled"},
+     {{nxmax, 0.5, "Maximum Curliness"}, 0.03, 1.0, Appearance -> "Labeled"},
+     Delimiter,
+     {{tlenmin, 10, "Minimum Tendril Length"}, 2, 100, 1, Appearance -> "Labeled"},
+     {{tlenmax, 20, "Maximum Tendril Length"}, 2, 100, 1, Appearance -> "Labeled"},
+     Delimiter,
+     {{noiseExp, 1.0, "Noise Exponent"}, 0.1, 3.0, Appearance -> "Labeled"},
+     {{scale, 10.0, "Tendril Step Size"}, 1.0, 50.0, Appearance -> "Labeled"},
+     {{ntendrils, 7, "Number Of Tendrils"}, 2, 50, 1, Appearance -> "Labeled"},
+     Delimiter,
+
+     Style["", 12, Bold], Style["", 12, Bold], Style["Overall Parameters", 12, Bold], Style["", 12, Bold],
+     {{b, 0.8, "Binarize Threshold"}, 0.1, 1.0, Appearance -> "Labeled"},
+     {{seed, 0, "Random Number Seed"}, 0, 1000, 1, Appearance -> "Labeled"},
+     Delimiter,
+
+     ControlPlacement -> Left, SaveDefinitions -> True
+ ]
