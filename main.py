@@ -147,18 +147,19 @@ for r, c, p, w in circles:
     arc(c[0], c[1], r, p[0], p[1], w * thickness_modifier, ax)
 
 for xy, wh in disks:
-    ellipse = Ellipse(xy=xy, width=wh[0], height=wh[1])
+    ellipse = Ellipse(xy=xy, width=wh[0] * 2, height=wh[1] * 2, color='black') # here I multiply by 2 since in Mathematica argument is radius, while in matplotlib -- diameter
     ax.add_patch(ellipse)
 
 for xy, wh in blob_disks:
-    ellipse = Ellipse(xy=xy, width=wh[0], height=wh[1])
+    ellipse = Ellipse(xy=xy, width=wh[0] * 4, height=wh[1] * 4, color='black') # here I ... (look before)
     ax.add_patch(ellipse)
 
 for path, thikness in tendrils:
     path = [[t[0].real, t[1].real] for t in path]
     path = Path(path)
-    patch = PathPatch(path, facecolor ='none', capstyle='round', lw = thikness * thickness_modifier)
+    patch = PathPatch(path, facecolor ='none', capstyle='round', lw = thikness * thickness_modifier * 1.5)
     ax.add_patch(patch)
+
 
 
 
