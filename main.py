@@ -14,6 +14,10 @@ import io
 from PIL import Image
 import cv2
 
+# local file with default values
+import parameters
+
+
 # Drawind functions
 def arc(x, y, r, a1, a2, linewidth, ax, resolution=100):
     #draw arc
@@ -21,8 +25,6 @@ def arc(x, y, r, a1, a2, linewidth, ax, resolution=100):
     arc_xs = r * np.cos(arc_angles) + x
     arc_ys = r * np.sin(arc_angles) + y
     ax.plot(arc_xs, arc_ys, color = 'black', lw = linewidth)
-
-
 
 
 # Math creation functions. In the stack answer he draws everthing immideatly, 
@@ -53,10 +55,21 @@ def AnglePath(t):
     return np.array(out)
 
 # Main function with all the fun
-def Logogram(rmin, rmax, wmin, wmax, cv, nc, dmin, dmax, 
-    nd, b, phi0, seed, rbmin, rbmax, pmin, pmax, bmin, bmax,
-    nb, phi1, nxmin, nxmax, tlenmin, tlenmax, noiseExp, scale, 
-    ntendrils):
+def Logogram(
+    rmin, rmax,
+    wmin, wmax,
+    cv, nc, phi0,
+    dmin, dmax,
+    nd,
+    rbmin, rbmax,
+    bmin, bmax,
+    nb, phi1,
+    pmin, pmax, 
+    nxmin, nxmax, 
+    tlenmin, tlenmax,
+    noiseExp, scale,
+    ntendrils,
+    b, seed):
 
     radius = 1000.0
     np.random.seed(seed)
@@ -107,31 +120,15 @@ def Logogram(rmin, rmax, wmin, wmax, cv, nc, dmin, dmax,
     return circles, disks, blob_disks, tendrils
 
 
+
+
+
+
 # I set default parametrs here for the beggining.
-rmin, rmax = 0.98, 1.02
-wmin, wmax = 0.0003, 0.0010
-cv, nc = 0.05, 300
-dmin, dmax = 0.010, 0.030
-nd = 50
-b = 0.8
-phi0 = 5.0
-seed = 0
-rbmin, rbmax = 0.98, 1.02
-pmin, pmax = 0.0, 0.8
-bmin, bmax = 0.020, 0.070
-nb = 30
-phi1 = 2.0
-nxmin, nxmax = 0.1, 0.5
-tlenmin, tlenmax = 10, 20
-noiseExp, scale = 1.0, 10.0 
-ntendrils = 7
 
 
-circles, disks, blob_disks, tendrils = Logogram(
-    rmin, rmax, wmin, wmax, cv, nc, dmin, dmax,
-    nd, b, phi0, seed, rbmin, rbmax, pmin, pmax, bmin, bmax,
-    nb, phi1, nxmin, nxmax, tlenmin, tlenmax, noiseExp, scale,
-    ntendrils)
+
+circles, disks, blob_disks, tendrils = Logogram(*parameters.parameters_dict.values())
 
 # Creating main plot
 plt.figure()
@@ -151,17 +148,14 @@ for xy, wh in disks:
     ax.add_patch(ellipse)
 
 for xy, wh in blob_disks:
-    ellipse = Ellipse(xy=xy, width=wh[0] * 4, height=wh[1] * 4, color='black') # here I ... (look before)
+    ellipse = Ellipse(xy=xy, width=wh[0] * 2, height=wh[1] * 2, color='black') # here I ... (look before)
     ax.add_patch(ellipse)
 
 for path, thikness in tendrils:
     path = [[t[0].real, t[1].real] for t in path]
     path = Path(path)
-    patch = PathPatch(path, facecolor ='none', capstyle='round', lw = thikness * thickness_modifier * 1.5)
+    patch = PathPatch(path, facecolor ='none', capstyle='round', lw = thikness * thickness_modifier)
     ax.add_patch(patch)
-
-
-
 
 
 ax.set_aspect('equal', 'box')
@@ -194,23 +188,20 @@ blur = cv2.blur(dilated,(5,5))
 # seems like mathematica using this one by default
 # https://reference.wolfram.com/language/ref/Binarize.html?q=Binarize
 # Binarize[image] uses Otsu's cluster variance maximization method.
-otsu_threshold, threshold = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
+otsu_threshold, threshold = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 
-cv2.imshow('image', threshold)
 
+# opencv code to show image and save it:
+window_title = 'image'
+cv2.imshow(window_title, threshold)
 while cv2.waitKey(50) != 27: # press ESC
     pass
 
-
 cv2.destroyAllWindows()
-
 cv2.imwrite('result.jpg',threshold)
-
-# im.show()
-
 buf.close()
-# plt.show()
+
 
 
 
