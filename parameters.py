@@ -2,7 +2,7 @@
 
 # parameter, default value, name of the parameter, min resonable value, max resonable value, resonable step
 parameters = [
-    ["rmin", 0.98, "Minimum Circle Radius", 0.9, 1.1],
+    ["rmin", 0.98, "Minimum Circle Radius", 0.9, 1.1, 0.01],
     ["rmax", 1.02, "Maximum Circle Radius", 0.9, 1.1],
 
     ["wmin", 0.0003, "Minimum Line Thickness", 0.0002, 0.008],

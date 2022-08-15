@@ -11,8 +11,10 @@ from matplotlib.patches import PathPatch
 from matplotlib.path import Path
 
 import io
-from PIL import Image
 import cv2
+
+import tkinter as tk
+from PIL import Image, ImageTk
 
 # local file with default values
 import parameters
@@ -75,7 +77,7 @@ def Logogram(
     np.random.seed(seed)
     
     circles = []
-    for i in range(nc):
+    for i in range(int(nc)):
     # (* circles composing circular stroke *)
         r = np.random.uniform(rmin * radius, rmax * radius) # radius
         c = np.random.uniform(-r * cv, r * cv, 2) # coordinate
@@ -86,7 +88,7 @@ def Logogram(
     
     # (* additional disks composing circular stroke *)
     disks = []
-    for i in range(nd):
+    for i in range(int(nd)):
         tmp = np.random.uniform(rmin * radius, rmax * radius)
         t = np.random.uniform(0, 6.283) + phi0
         c = tmp * np.array([np.cos(t), np.sin(t)]) # cooridinate
@@ -97,7 +99,7 @@ def Logogram(
     # (* disks composing blob on circular stroke *)
     
     blob_disks = []
-    for i in range(nb):
+    for i in range(int(nb)):
         r = np.random.uniform(rbmin * radius, rbmax * radius)
         dp = np.random.uniform(pmin, pmax)
         c = r * np.array([np.cos(phi1 + dp), np.sin(phi1 + dp)])
@@ -106,7 +108,7 @@ def Logogram(
     
     # (* tendrils on blob *)
     tendrils = []
-    for i in range(ntendrils):
+    for i in range(int(ntendrils)):
         nx = np.random.uniform(nxmin, nxmax)
         tlen = 2 * np.random.randint(tlenmin, tlenmax) # TODO: check it randint works the same in Mathematica. Is it [a, b] or [a, b) 
         noise = nx * NoiseGen(tlen, noiseExp)
@@ -120,15 +122,39 @@ def Logogram(
     return circles, disks, blob_disks, tendrils
 
 
+params_dict = parameters.parameters_dict
+params = parameters.parameters
 
 
 
+root = tk.Tk()
 
-# I set default parametrs here for the beggining.
+slider_frame = tk.Frame(root)
+slider_frame.grid(column=0, row=0, sticky=tk.N)
 
 
+def trackbar_callback(val, key):
+    global params_dict
+    params_dict[key] = float(val)
 
-circles, disks, blob_disks, tendrils = Logogram(*parameters.parameters_dict.values())
+for i in range(len(params)):
+    slider_start = float(params[i][3])
+    slider_end = float(params[i][4])
+    if len(params[i]) == 6:
+        slider_resolution = float(params[i][5])
+    else:
+        slider_resolution = float(slider_end - slider_start) / 10.0
+    slider_val = params[i][0]
+    slider_name = params[i][2]
+    print(*[type(i) for i in [slider_val, slider_start, slider_end, slider_resolution]])
+    
+    slider_labl = tk.Label(slider_frame, text=slider_name).grid(row=i, column=0, pady=4, padx=4)
+    scale = tk.Scale(slider_frame, from_=slider_start,
+                     to=slider_end, length=200, resolution=slider_resolution,
+                     orient=tk.HORIZONTAL, command=lambda val: trackbar_callback(val, slider_val))
+    scale.grid(column=1, row=i)
+
+circles, disks, blob_disks, tendrils = Logogram(*params_dict.values())
 
 # Creating main plot
 plt.figure()
@@ -191,17 +217,26 @@ blur = cv2.blur(dilated,(5,5))
 otsu_threshold, threshold = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 
+resized = cv2.resize(threshold, dsize=(800, 800), interpolation=cv2.INTER_CUBIC)
+
+img =  ImageTk.PhotoImage(image=Image.fromarray(resized))
+
+canvas = tk.Canvas(root, width=800, height=800)
+canvas.grid(column=1, row=0, sticky=tk.EW)
+canvas.create_image(0, 0, image=img, anchor='nw')
+
+
 
 # opencv code to show image and save it:
-window_title = 'image'
-cv2.imshow(window_title, threshold)
-while cv2.waitKey(50) != 27: # press ESC
-    pass
+# cv2.imshow(window_title, threshold)
+# while cv2.waitKey(50) != 27: # press ESC
+    # pass
 
-cv2.destroyAllWindows()
-cv2.imwrite('result.jpg',threshold)
+# cv2.destroyAllWindows()
+cv2.imwrite('result.jpg', threshold)
 buf.close()
 
+root.mainloop()
 
 
 
