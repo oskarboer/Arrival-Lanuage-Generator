@@ -19,6 +19,7 @@ from PIL import Image, ImageTk
 # local file with default values
 import parameters
 from logogram_drawing import *
+import cairo_render
 import callbacks
 
 params_dict = parameters.parameters_dict
@@ -31,13 +32,13 @@ root = tk.Tk()
 
 def redraw():
     global logogram_image
-    logogram_image = draw_logogram(params_dict)
+    # logogram_image = draw_logogram(params_dict)
+    logogram_image = cairo_render.cairo_render_logogram(params_dict)
 
     cv2.imwrite('result.jpg', logogram_image)
 
     resized = cv2.resize(logogram_image, dsize=(800, 800), interpolation=cv2.INTER_CUBIC)
     tmp = ImageTk.PhotoImage(image=Image.fromarray(resized))
-    print(tmp)
     return tmp
 
 def update_image():
