@@ -12,7 +12,7 @@ WIDTH, HEIGHT = 1000, 1000
 
 params_dict = parameters.parameters_dict
 params = parameters.parameters
-SCALE_FACTOR = 2500
+SCALE_FACTOR = 3000
 
 
 # for i in circles:
