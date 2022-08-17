@@ -20,7 +20,6 @@ from PIL import Image, ImageTk
 import parameters
 from logogram_drawing import *
 import callbacks
-import time
 
 params_dict = parameters.parameters_dict
 params = parameters.parameters
