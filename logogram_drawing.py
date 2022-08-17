@@ -152,6 +152,7 @@ def draw_logogram(params_dict):
 
     # PIL image to cv2 image (np array) 
     cv_img = np.array(im)
+    print(cv_img.shape)
     gray_image = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY).astype('uint8')
 
     # https://reference.wolfram.com/language/ref/DiskMatrix.html?q=DiskMatrix
