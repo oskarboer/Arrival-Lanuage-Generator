@@ -147,6 +147,7 @@ def draw_logogram(params_dict):
     # Converting plot to PIL image
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
+    plt.close(fig)
     buf.seek(0)
     im = Image.open(buf)
 
