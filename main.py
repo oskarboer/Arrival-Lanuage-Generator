@@ -25,7 +25,6 @@ params_dict = parameters.parameters_dict
 params = parameters.parameters
 
 
-
 root = tk.Tk()
 
 
@@ -46,7 +45,6 @@ def update_image():
     canvas.itemconfigure(image_container, image=img)
 
 
-
 img = redraw()
 
 
@@ -59,197 +57,13 @@ slider_frame = tk.Frame(root)
 slider_frame.grid(column=0, row=0, sticky=tk.N)
 
 
-
-
-# def get_callbacks():
-#     trackbar_callbacks = {}
-#     for key in params_dict.keys():
-#         def trackbar_callback(val):
-#             global params_dict
-#             # here we try to preserve the initial type, since the slider returns an str
-#             t = type(params_dict[key])
-#             print(key, params_dict[key], t)
-#             params_dict[key] = t(val)
-#             update_image()
-#         
-#         trackbar_callbacks[key] = copy_func(tmp)
-#     return trackbar_callbacks
-
-
-# trackbar_callbacks = get_callbacks()
-
-def trackbar_callback_rmin(val):
+def trackbar_callback(key, val):
     global params_dict
-    t = type(params_dict["rmin"])
-    params_dict["rmin"] = t(val)
+    # here we try to preserve the initial type, since the slider returns an str
+    t = type(params_dict[key])
+    print(key, params_dict[key], t)
+    params_dict[key] = t(val)
     update_image()
-
-def trackbar_callback_rmax(val):
-    global params_dict
-    t = type(params_dict["rmax"])
-    params_dict["rmax"] = t(val)
-    update_image()
-
-def trackbar_callback_wmin(val):
-    global params_dict
-    t = type(params_dict["wmin"])
-    params_dict["wmin"] = t(val)
-    update_image()
-
-def trackbar_callback_wmax(val):
-    global params_dict
-    t = type(params_dict["wmax"])
-    params_dict["wmax"] = t(val)
-    update_image()
-
-def trackbar_callback_cv(val):
-    global params_dict
-    t = type(params_dict["cv"])
-    params_dict["cv"] = t(val)
-    update_image()
-
-def trackbar_callback_nc(val):
-    global params_dict
-    t = type(params_dict["nc"])
-    params_dict["nc"] = t(val)
-    update_image()
-
-def trackbar_callback_phi0(val):
-    global params_dict
-    t = type(params_dict["phi0"])
-    params_dict["phi0"] = t(val)
-    update_image()
-
-def trackbar_callback_dmin(val):
-    global params_dict
-    t = type(params_dict["dmin"])
-    params_dict["dmin"] = t(val)
-    update_image()
-
-def trackbar_callback_dmax(val):
-    global params_dict
-    t = type(params_dict["dmax"])
-    params_dict["dmax"] = t(val)
-    update_image()
-    
-def trackbar_callback_nd(val):
-    global params_dict
-    t = type(params_dict["nd"])
-    params_dict["nd"] = t(val)
-    update_image()
-  
-def trackbar_callback_rbmin(val):
-    global params_dict
-    t = type(params_dict["rbmin"])
-    params_dict["rbmin"] = t(val)
-    update_image()
-   
-def trackbar_callback_rbmax(val):
-    global params_dict
-    t = type(params_dict["rbmax"])
-    params_dict["rbmax"] = t(val)
-    update_image()
-
-def trackbar_callback_bmin(val):
-    global params_dict
-    t = type(params_dict["bmin"])
-    params_dict["bmin"] = t(val)
-    update_image()
-
-def trackbar_callback_bmax(val):
-    global params_dict
-    t = type(params_dict["bmax"])
-    params_dict["bmax"] = t(val)
-    update_image()
-    
-def trackbar_callback_nb(val):
-    global params_dict
-    t = type(params_dict["nb"])
-    params_dict["nb"] = t(val)
-    update_image()
-    
-def trackbar_callback_phi1(val):
-    global params_dict
-    t = type(params_dict["phi1"])
-    params_dict["phi1"] = t(val)
-    update_image()
-    
-def trackbar_callback_pmin(val):
-    global params_dict
-    t = type(params_dict["pmin"])
-    params_dict["pmin"] = t(val)
-    update_image()
-
-def trackbar_callback_pmax(val):
-    global params_dict
-    t = type(params_dict["pmax"])
-    params_dict["pmax"] = t(val)
-    update_image()
-
-def trackbar_callback_nxmin(val):
-    global params_dict
-    t = type(params_dict["nxmin"])
-    params_dict["nxmin"] = t(val)
-    update_image()
-
-def trackbar_callback_nxmax(val):
-    global params_dict
-    t = type(params_dict["nxmax"])
-    params_dict["nxmax"] = t(val)
-    update_image()
-
-def trackbar_callback_tlenmin(val):
-    global params_dict
-    t = type(params_dict["tlenmin"])
-    params_dict["tlenmin"] = t(val)
-    update_image()
-
-def trackbar_callback_tlenmax(val):
-    global params_dict
-    t = type(params_dict["tlenmax"])
-    params_dict["tlenmax"] = t(val)
-    update_image()
-
-def trackbar_callback_noiseExp(val):
-    global params_dict
-    t = type(params_dict["noiseExp"])
-    params_dict["noiseExp"] = t(val)
-    update_image()
-
-def trackbar_callback_scale(val):
-    global params_dict
-    t = type(params_dict["scale"])
-    params_dict["scale"] = t(val)
-    update_image()
-
-def trackbar_callback_ntendrils(val):
-    global params_dict
-    t = type(params_dict["ntendrils"])
-    params_dict["ntendrils"] = t(val)
-    update_image()
-
-def trackbar_callback_b(val):
-    global params_dict
-    t = type(params_dict["b"])
-    params_dict["b"] = t(val)
-    update_image()
-
-def trackbar_callback_seed(val):
-    global params_dict
-    t = type(params_dict["seed"])
-    params_dict["seed"] = t(val)
-    update_image()
-    
- 
-
-d = {"rmin":trackbar_callback_rmin, "rmax":trackbar_callback_rmax, "wmin":trackbar_callback_wmin, "wmax":trackbar_callback_wmax,
-"cv":trackbar_callback_cv, "nc":trackbar_callback_nc, "phi0":trackbar_callback_phi0, "dmin":trackbar_callback_dmin,
-"dmax":trackbar_callback_dmax, "nd":trackbar_callback_nd, "rbmin":trackbar_callback_rbmin, "rbmax":trackbar_callback_rbmax,
-"bmin":trackbar_callback_bmin, "bmax":trackbar_callback_bmax, "nb":trackbar_callback_nb, "phi1":trackbar_callback_phi1, "pmin":trackbar_callback_pmin,
-"pmax":trackbar_callback_pmax, "nxmin":trackbar_callback_nxmin, "nxmax":trackbar_callback_nxmax, "tlenmin":trackbar_callback_tlenmin,
-"tlenmax":trackbar_callback_tlenmax, "noiseExp":trackbar_callback_noiseExp, "scale":trackbar_callback_scale, "ntendrils":trackbar_callback_ntendrils,
-"b":trackbar_callback_b, "seed":trackbar_callback_seed}
-
 
 for i in range(len(params)):
     slider_start = (params[i][3])
@@ -264,21 +78,14 @@ for i in range(len(params)):
     slider_labl = tk.Label(slider_frame, text=slider_name).grid(row=i, column=0, pady=4, padx=4)
     scale = tk.Scale(slider_frame, from_=slider_start,
                      to=slider_end, length=200, resolution=slider_resolution,
-                     orient=tk.HORIZONTAL, command=d[params[i][0]])
+                     orient=tk.HORIZONTAL, command=lambda v, name=slider_val: trackbar_callback(name, v))
+
     scale.grid(column=1, row=i)
 
 
 # cv2.imwrite('result.jpg', logogram_image)
 
 root.mainloop()
-
-
-
-
-
-
-
-
 
 
 
