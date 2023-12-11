@@ -16,8 +16,8 @@ import cv2
 import tkinter as tk
 from PIL import Image, ImageTk
 
-# local file with default values
-import parameters
+
+import parameters  # local file with default values
 from logogram_drawing import *
 import cairo_render
 
@@ -35,12 +35,14 @@ def redraw():
 
     cv2.imwrite('result.jpg', logogram_image)
 
-    resized = cv2.resize(logogram_image, dsize=(800, 800), interpolation=cv2.INTER_CUBIC)
+    resized = cv2.resize(logogram_image, dsize=(
+        800, 800), interpolation=cv2.INTER_CUBIC)
     tmp = ImageTk.PhotoImage(image=Image.fromarray(resized))
     return tmp
 
+
 def update_image():
-    global img # a critical thing since the pointer should be existing, otherwise the image is not shown
+    global img  # a critical thing since the pointer should be existing, otherwise the image is not shown
     img = redraw()
     canvas.itemconfigure(image_container, image=img)
 
@@ -65,6 +67,7 @@ def trackbar_callback(key, val):
     params_dict[key] = t(val)
     update_image()
 
+
 for i in range(len(params)):
     slider_start = (params[i][3])
     slider_end = (params[i][4])
@@ -74,8 +77,9 @@ for i in range(len(params)):
         slider_resolution = (slider_end - slider_start) / 10.0
     slider_val = params[i][0]
     slider_name = params[i][2]
-    
-    slider_labl = tk.Label(slider_frame, text=slider_name).grid(row=i, column=0, pady=4, padx=4)
+
+    slider_labl = tk.Label(slider_frame, text=slider_name).grid(
+        row=i, column=0, pady=4, padx=4)
     scale = tk.Scale(slider_frame, from_=slider_start,
                      to=slider_end, length=200, resolution=slider_resolution,
                      orient=tk.HORIZONTAL, command=lambda v, name=slider_val: trackbar_callback(name, v))
@@ -86,6 +90,3 @@ for i in range(len(params)):
 # cv2.imwrite('result.jpg', logogram_image)
 
 root.mainloop()
-
-
-

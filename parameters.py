@@ -10,7 +10,7 @@ parameters = [
 
     ["cv", 0.05, "Circle Centre Variation", 0.01, 0.2],
     ["nc", 300, "Number of Circles", 20, 1000, 20],
-         
+
     ["phi0", 5.0, "Angle of Circle Gap", 0.0, 6.3],
     ["dmin", 0.010, "Minimum Disk Radius", 0.001, 0.2],
     ["dmax", 0.030, "Maximum Disk Radius", 0.001, 0.2],
@@ -50,4 +50,3 @@ k = [i[0] for i in parameters]
 val = [i[1] for i in parameters]
 
 parameters_dict = dict(zip(k, val))
-
